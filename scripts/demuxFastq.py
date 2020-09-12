@@ -27,7 +27,11 @@ def fileOutOp(sampleBC, libN):
 
 
 def processFastq(R1, R2, libN, goodCellBCDict, cellMaster):
-    #libN = '1'
+    '''Takes paired FASTQs opens them simulataneously and parses Read1 to find cell bar code and umi
+    these are used to find the sample origin and to re-construct the sample specific fastq. Sample ID output fastqs
+    are created and then in second instance if present appended.
+    Dynamic programming in the sense that if a particular UMI was previiously seen, it is directly written out
+    '''
     R1File = gzipHandle(R1)
     R2File = gzipHandle(R2)
     r1String = ''
@@ -40,7 +44,6 @@ def processFastq(R1, R2, libN, goodCellBCDict, cellMaster):
             print('{} PROCESSED LINES {} AND {} FASTQ Recs'.format(R1, lineN, fastqRec))
         if lineN % 4 == 1: # every 2nd lines
             fastaLineR1 = r1.strip() ## Cell barcode will appear at 0:16
-            #fastaLineR2 = r2.strip()
             cell, umiInd= [0, 16], [16, 28]
             cell_start, cell_end = cell
             umi_start, umi_end = umiInd
@@ -65,11 +68,9 @@ def processFastq(R1, R2, libN, goodCellBCDict, cellMaster):
                         r1String += r1
                         r2String += r2  
                 else:
-                    #r1String = r2String = ''
                     writeState = False
         elif lineN % 4 == 3: # end fast rec
             if writeState is True:
-                #print(writeState)
                 r1String += r1
                 r2String += r2  
                 R1out.write(r1String)
