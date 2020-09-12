@@ -97,13 +97,13 @@ def main():
     parser.add_argument('-R1', help='FASTQ pair 1', required=True)
     parser.add_argument('-R2', help='FASTQ pair 2', required=True)
     parser.add_argument('-Lib', help='Library number', required=True)
-    parser.add_argument('-D', help='A csv file with 2 columns, cellIds and sample id of each cell')
+    parser.add_argument('-D', help='A csv file with 2 columns, cellIds and sample id of each cell', required=False)
     args=parser.parse_args()
     R1 = args.R1
     R2 = args.R2
     libN = str(args.Lib)
-    demuxed = args.D
-    goodCells = pd.read_csv(demuxed)#pd.read_csv('data/ClassifiedDemuxedBarcodes_July23_2020.csv.gz')
+    #demuxed = args.D
+    goodCells = pd.read_csv('data/ClassifiedDemuxedBarcodes_July23_2020.csv.gz') #pd.read_csv(demuxed)#
     goodCells=goodCells.loc[(goodCells.barcodes != 'Negative') & (goodCells.barcodes != 'Doublet')]
     goodCells.reset_index(drop=True, inplace=True)
     goodCellBCDict={i:j for i, j in zip(goodCells.cellIds.values, goodCells.barcodes.values)}
